@@ -1,0 +1,28 @@
+language:
+  sh
+  python
+
+python:
+  - "2.7"
+
+sudo: required
+
+cache: apt
+
+services:
+  - docker
+
+notifications:
+  slack: eftcamb:c0M48rajcf8rkANZsQCAHoaF
+
+before_install:
+  - docker pull eftcamb/eftbox
+
+script:
+  - while true; do echo 'Travis do not sleep!'; sleep 300s; done &
+  - TIME_PID=$!
+  - docker run -v $(pwd):$(pwd) -e TRAVIS -t eftcamb/eftbox /bin/sh -c "cd $(pwd) ; make default"
+  - docker run -v $(pwd):$(pwd) -e TRAVIS -t eftcamb/eftbox /bin/sh -c "cd $(pwd) ; make Debug"
+  - docker run -v $(pwd):$(pwd) -e TRAVIS -t eftcamb/eftbox /bin/sh -c "cd $(pwd) ; make clean ; make Release"
+  - docker run -v $(pwd):$(pwd) -e TRAVIS -t eftcamb/eftbox /bin/sh -c "cd $(pwd) ; make rebuild"
+  - kill $TIME_PID
