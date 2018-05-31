@@ -17,7 +17,7 @@ F90C     = ifort
 
 #use this if mpif90 is trying to use gfortran: MPIF90C = mpif90 -f90=ifort
 
-FFLAGS = -mkl -O3 -no-prec-div -fpp
+FFLAGS = -mkl -O0 -no-prec-div -fpp
 DEBUGFLAGS = -mkl -g -fp-stack-check -O0 -check all -check bounds -check uninit -check noarg_temp_created -traceback -fpp -fpe0
 #add -fpe0 to check for floating point errors (think lowLike also throws these harmlessly)
 MODOUT = -module $(OUTPUT_DIR)

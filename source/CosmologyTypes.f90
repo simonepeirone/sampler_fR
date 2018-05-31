@@ -73,12 +73,6 @@
 
         integer :: num_massive_neutrinos = -1 !if neutrino_hierarcy_degenerate, number of massive degenerate eigenstates
         integer :: neutrino_hierarchy = neutrino_hierarchy_normal
-        
-        ! EFTCosmoMC MOD START: add an EFTCAMB to CosmoSettings
-#ifdef EFTCOSMOMC
-        type(EFTCAMB) :: EFTCAMB_settings
-#endif
-        ! EFTCosmoMC MOD END.
 
     end Type TCosmoTheoryParams
 
@@ -90,6 +84,13 @@
         integer, allocatable :: ArraySizes(:)
         !e.g. lmax_cl(1,1) is lmax for TT; zero if CL is not used; order is T, E, B, Phi
         real(mcp), dimension(:), allocatable :: power_redshifts
+
+        ! EFTCosmoMC MOD START: add an EFTCAMB to CosmoSettings
+#ifdef EFTCOSMOMC
+        type(EFTCAMB) :: EFTCAMB_settings
+#endif
+        ! EFTCosmoMC MOD END.
+
     contains
     procedure, private :: Initialize_PKSettings
     procedure, private :: Initialize_CMBSettings
