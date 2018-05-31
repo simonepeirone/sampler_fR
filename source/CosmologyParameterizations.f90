@@ -520,6 +520,7 @@ end do
     Type(CMBParams) CMB
     real(mcp) h2,H0
     integer, optional :: error
+    real(mcp), dimension(2)::par_temp
 
     CMB%H0=H0
     if (firsttime) then
@@ -569,7 +570,12 @@ end do
                 if ( .not. allocated( CMB%EFTCAMB_parameters%model ) ) then
                     CMB%EFTCAMB_parameters = CosmoSettings%EFTCAMB_settings
                 end if
-                call CMB%EFTCAMB_parameters%model%init_model_parameters( Params(16+last_power_index+1:16+last_power_index+CMB%EFTCAMB_parameters%model%parameter_number) )
+                !log sampling for B0
+                par_temp = Params(16+last_power_index+1:16+last_power_index+CMB%EFTCAMB_parameters%model%parameter_number)
+                par_temp(1) = 10.**par_temp(1)
+                ! write(*,*) par_temp
+                ! call MpiStop('done')
+                call CMB%EFTCAMB_parameters%model%init_model_parameters( par_temp )
             end if
 #endif
             ! EFTCosmoMC MOD END.
