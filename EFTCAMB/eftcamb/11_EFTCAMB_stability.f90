@@ -328,6 +328,28 @@ contains
 
         end if
 
+
+        ! 6) enforce mass viability:
+        if ( input_EFTCAMB%EFT_mass_stability_1 ) then
+
+          ! 1- Stability of mu_1 eigenvalue :
+          if ( eft_cache%EFT_mu_1 < -eft_cache%adotoa**2/a**2 ) then
+              EFTTestStability = .false.
+              if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,*) '   Mass instability: mu_1 instability. mass term = ', eft_cache%EFT_mu_1
+          end if
+
+        end if
+
+        if ( input_EFTCAMB%EFT_mass_stability_2 ) then
+
+          ! 2- Stability of mu_2 eigenvalue :
+          if ( eft_cache%EFT_mu_2 < -eft_cache%adotoa**2/a**2 ) then
+              EFTTestStability = .false.
+              if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,*) '   Mass instability: mu_2 instability. mass term = ', eft_cache%EFT_mu_2
+          end if
+
+        end if
+
     end function EFTTestStability
 
     ! ---------------------------------------------------------------------------------------------

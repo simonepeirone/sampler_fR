@@ -266,6 +266,8 @@ module EFTCAMB_cache
         ! 12) Kinetic and Gradient quantities for the stability check:
         real(dl) :: EFT_kinetic   !< the value of the kinetic term. Refer to the Numerical Notes for the definition.
         real(dl) :: EFT_gradient  !< the value of the gradient term. Refer to the Numerical Notes for the definition.
+        real(dl) :: EFT_mu_1
+        real(dl) :: EFT_mu_2
         ! 13) other quantities usefull for debug purposes:
         real(dl) :: EFTISW        !< Source for ISW effect.
         real(dl) :: EFTLensing    !< Source for lensing effect.
@@ -394,6 +396,8 @@ contains
         ! 12) Kinetic and Gradient quantities for the stability check:
         self%EFT_kinetic   = 0._dl
         self%EFT_gradient  = 0._dl
+        self%EFT_mu_1      = 0._dl
+        self%EFT_mu_2      = 0._dl
         ! 13) other quantities usefull for debug purposes:
         self%EFTISW        = 0._dl
         self%EFTLensing    = 0._dl
@@ -502,6 +506,8 @@ contains
         HaveNan = HaveNan.or.IsNaN(self%EFTDT)
         HaveNan = HaveNan.or.IsNaN(self%EFT_kinetic)
         HaveNan = HaveNan.or.IsNaN(self%EFT_gradient)
+        HaveNan = HaveNan.or.IsNaN(self%EFT_mu_1)
+        HaveNan = HaveNan.or.IsNaN(self%EFT_mu_2)
         HaveNan = HaveNan.or.IsNaN(self%EFTISW)
         HaveNan = HaveNan.or.IsNaN(self%EFTLensing)
         HaveNan = HaveNan.or.IsNaN(self%CMBTSource)
