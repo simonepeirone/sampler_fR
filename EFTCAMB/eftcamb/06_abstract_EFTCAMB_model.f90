@@ -553,8 +553,7 @@ contains
     !SP this holds only for designer f(R) with wCDM background
 
     call self%parameter_values(2, EFT_w0)
-    call self%parameter_values(3, EFT_w1)
-    EFT_w1 = -1._dl*EFT_w1
+    EFT_w1 = 0._dl
     EFT_w2 = 0._dl
     EFTOmegaPPPP = 0._dl
     EFTGamma1PP = 0._dl

@@ -261,6 +261,10 @@
         if ( this%EFTCAMB_settings%EFTFlag /= 0 ) then
             ! print the EFTCAMB header:
             call this%EFTCAMB_settings%EFTCAMB_print_CosmoMC_header()
+            ! print*, '000'
+            ! print*, this%EFTCAMB_settings%EFTflag
+            ! print*, this%EFTCAMB_settings%EFT_physical_stability
+            ! print*, this%EFTCAMB_settings%EFT_mass_stability_1
             ! initialize the output root name:
             this%EFTCAMB_settings%outroot = TRIM( Ini%Original_filename )
             ! initialize feedback level:

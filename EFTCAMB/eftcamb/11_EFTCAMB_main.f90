@@ -64,7 +64,7 @@ module EFTCAMB_main
         ! EFTCAMB stability flags:
         logical   :: EFT_mathematical_stability  !< Flag that extablishes wether to use mathematical stability.
         logical   :: EFT_physical_stability      !< Flag that extablishes wether to use physical stability.
-        logical   :: EFT_additional_priors       !< Flag that extablishes wether to use some additional priors that are related to the specific model.
+        logical   :: EFT_additional_priors
         logical   :: EFT_mass_stability_1        !< Flag that extablishes wether to use some additional priors that are related to the specific model.
         logical   :: EFT_mass_stability_2        !< Flag that extablishes wether to use some additional priors that are related to the specific model.
 
