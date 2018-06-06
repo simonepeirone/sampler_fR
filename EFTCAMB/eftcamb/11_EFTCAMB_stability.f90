@@ -31,6 +31,7 @@ module EFTCAMB_stability
     use EFTCAMB_abstract_model_full
     use EFTCAMB_abstract_model_designer
     use EFTCAMB_main
+    use EFTCAMB_ReturnToGR
 
     implicit none
 
@@ -165,7 +166,7 @@ contains
         logical  :: EFT_HaveNan_parameter, EFT_HaveNan_timestep
         real(dl) :: EFT_instability_rate, tempk, temp1, temp2, temp3, temp4, temp5
         integer  :: ind_max, ind
-        real(dl) :: dtauda, test_dtauda
+        real(dl) :: dtauda, test_dtauda, aRGR
         external :: dtauda
 
         ! Stability check initialization
@@ -177,29 +178,32 @@ contains
         ! protect against k_max too small:
         if ( k_max < 0.1_dl ) k_max = 0.1_dl
 
+        !SP: compute RGR time
+        ! call CAMBParams_Set(P)
+        call EFTCAMBReturnToGR( input_EFTCAMB%model, params_cache, 1.d-8, aRGR )
         ! check stability of the theory:
 
-        ! 0) dtauda should be finite:
-        test_dtauda = dtauda(a)
-        if ( test_dtauda > HUGE(test_dtauda) .or. IsNaN(test_dtauda) ) then
-            EFTTestStability = .false.
-            if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,'(a)') '   Model dtauda is Nan'
-            return
-        end if
-        ! 1) everything inside the parameter cache should not be a NaN:
-        call params_cache%is_nan( EFT_HaveNan_parameter )
-        if ( EFT_HaveNan_parameter ) then
-            EFTTestStability = .false.
-            if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,'(a)') '   Model has Nan in the parameter cache'
-            return
-        end if
-        ! 2) everything inside the time-step cache should not be a NaN:
-        call eft_cache%is_nan( EFT_HaveNan_timestep )
-        if ( EFT_HaveNan_timestep ) then
-            EFTTestStability = .false.
-            if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,'(a)') '   Model has Nan in the timestep cache'
-            return
-        end if
+        ! ! 0) dtauda should be finite:
+        ! test_dtauda = dtauda(a)
+        ! if ( test_dtauda > HUGE(test_dtauda) .or. IsNaN(test_dtauda) ) then
+        !     EFTTestStability = .false.
+        !     if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,'(a)') '   Model dtauda is Nan'
+        !     return
+        ! end if
+        ! ! 1) everything inside the parameter cache should not be a NaN:
+        ! call params_cache%is_nan( EFT_HaveNan_parameter )
+        ! if ( EFT_HaveNan_parameter ) then
+        !     EFTTestStability = .false.
+        !     if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,'(a)') '   Model has Nan in the parameter cache'
+        !     return
+        ! end if
+        ! ! 2) everything inside the time-step cache should not be a NaN:
+        ! call eft_cache%is_nan( EFT_HaveNan_timestep )
+        ! if ( EFT_HaveNan_timestep ) then
+        !     EFTTestStability = .false.
+        !     if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,'(a)') '   Model has Nan in the timestep cache'
+        !     return
+        ! end if
         ! 3) enforce mathematical stability:
         if ( input_EFTCAMB%EFT_mathematical_stability ) then
 
@@ -235,7 +239,7 @@ contains
             !    violating it would completely mess up cosmological observables.
 
             !    This is the maximum allowed rate of instability. Units shall be Mpc^-1.
-            EFT_instability_rate = 0._dl
+            EFT_instability_rate = params_cache%h0_Mpc
 
             !    This condition needs to be tested in k. Sample in k.
             ind_max = 10
@@ -276,11 +280,17 @@ contains
             end do
 
         end if
+        if ( .not. EFTTestStability ) then
+            return
+        end if
+
         ! 4) enforce model specific priors:
         if ( input_EFTCAMB%EFT_additional_priors ) then
+          EFTTestStability = .true.
             EFTTestStability = input_EFTCAMB%model%additional_model_stability( a, params_cache, eft_cache )
             if ( .not. EFTTestStability ) then
-                if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,'(a)') '   Model specific stability criteria are not met'
+              if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,'(a)') '   Model specific stability criteria are not met'
+                return
             end if
         end if
         ! 5) enforce physical viability:
@@ -303,7 +313,7 @@ contains
             end if
 
             ! 2- Ghost condition:
-            if ( eft_cache%EFT_kinetic < 0._dl ) then
+            if ( eft_cache%EFT_kinetic < 0._dl .and. a>aRGR) then
                 EFTTestStability = .false.
                 if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,'(a,E11.4)') '   Physical instability: ghost instability. Kinetic term = ', eft_cache%EFT_kinetic
             end if
@@ -326,27 +336,18 @@ contains
                 if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,'(a,E11.4)') '   Physical instability: tensor gradient instability. Tensor gradient term = ', eft_cache%EFTDT
             end if
 
-        end if
+            ! ! 6- no mass instability:
+            if ( eft_cache%EFT_mu1 < -eft_cache%adotoa**2/a**2 .and. a>aRGR) then
+              ! if ( eft_cache%EFT_mu1 < 0._dl .and. a>aRGR) then
+                EFTTestStability = .false.
+                if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,'(a,E11.4)') '   Mass instability, mu_2 = ', eft_cache%EFT_mu1
+            end if
 
-
-        ! 6) enforce mass viability:
-        if ( input_EFTCAMB%EFT_mass_stability_1 ) then
-
-          ! 1- Stability of mu_1 eigenvalue :
-          if ( eft_cache%EFT_mu_1 < -eft_cache%adotoa**2/a**2 ) then
-              EFTTestStability = .false.
-              if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,*) '   Mass instability: mu_1 instability. mass term = ', eft_cache%EFT_mu_1
-          end if
-
-        end if
-
-        if ( input_EFTCAMB%EFT_mass_stability_2 ) then
-
-          ! 2- Stability of mu_2 eigenvalue :
-          if ( eft_cache%EFT_mu_2 < -eft_cache%adotoa**2/a**2 ) then
-              EFTTestStability = .false.
-              if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,*) '   Mass instability: mu_2 instability. mass term = ', eft_cache%EFT_mu_2
-          end if
+            if ( eft_cache%EFT_mu2 < -eft_cache%adotoa**2/a**2 .and. a>aRGR) then
+            !   if ( eft_cache%EFT_mu2 < 0._dl .and. a>aRGR) then
+                EFTTestStability = .false.
+                if ( input_EFTCAMB%EFTCAMB_feedback_level > 1 ) write(*,'(a,E11.4)') '   Mass instability, mu_2 = ',eft_cache%EFT_mu2
+            end if
 
         end if
 

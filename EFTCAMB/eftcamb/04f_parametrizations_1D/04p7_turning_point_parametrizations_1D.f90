@@ -59,6 +59,7 @@ module EFTCAMB_turning_point_parametrizations_1D
         procedure :: first_derivative      => TurningPointParametrized1DFirstDerivative     !< function that returns the first derivative of the turning point function.
         procedure :: second_derivative     => TurningPointParametrized1DSecondDerivative    !< function that returns the second derivative of the turning point function.
         procedure :: third_derivative      => TurningPointParametrized1DThirdDerivative     !< function that returns the third derivative of the turning point function.
+        procedure :: fourth_derivative     => TurningPointParametrized1DFourthDerivative     !< function that returns the third derivative of the turning point function.
         procedure :: integral              => TurningPointParametrized1DIntegral            !< function that returns the strange integral that we need for w_DE.
 
     end type turning_point_parametrization_1D
@@ -213,6 +214,19 @@ contains
         TurningPointParametrized1DThirdDerivative = 0._dl
 
     end function TurningPointParametrized1DThirdDerivative
+
+    function TurningPointParametrized1DFourthDerivative( self, x, eft_cache )
+
+        implicit none
+
+        class(turning_point_parametrization_1D)            :: self      !< the base class
+        real(dl), intent(in)                               :: x         !< the input scale factor
+        type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+        real(dl) :: TurningPointParametrized1DFourthDerivative           !< the output value
+
+        TurningPointParametrized1DFourthDerivative = 0._dl
+
+    end function TurningPointParametrized1DFourthDerivative
 
     ! ---------------------------------------------------------------------------------------------
     !> Function that returns the integral of the function, as defined in the notes.

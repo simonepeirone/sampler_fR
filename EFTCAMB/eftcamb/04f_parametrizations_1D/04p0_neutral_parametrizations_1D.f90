@@ -53,6 +53,7 @@ module EFTCAMB_neutral_parametrization_1D
         procedure :: first_derivative      => ZeroParametrized1DFirstDerivative     !< function that returns the first derivative of the zero function.
         procedure :: second_derivative     => ZeroParametrized1DSecondDerivative    !< function that returns the second derivative of the zero function.
         procedure :: third_derivative      => ZeroParametrized1DThirdDerivative     !< function that returns the third derivative of the zero function.
+        procedure :: fourth_derivative      => ZeroParametrized1DFourthDerivative     !< function that returns the Fourth derivative of the zero function.
         procedure :: integral              => ZeroParametrized1DIntegral            !< function that returns the strange integral that we need for w_DE.
 
     end type zero_parametrization_1D
@@ -74,6 +75,7 @@ module EFTCAMB_neutral_parametrization_1D
         procedure :: first_derivative      => wDELCDMParametrized1DFirstDerivative     !< function that returns the first derivative of the LCDM wDE function.
         procedure :: second_derivative     => wDELCDMParametrized1DSecondDerivative    !< function that returns the second derivative of the LCDM wDE function.
         procedure :: third_derivative      => wDELCDMParametrized1DThirdDerivative     !< function that returns the third derivative of the LCDM wDE function.
+        procedure :: fourth_derivative      => wDELCDMParametrized1DFourthDerivative     !< function that returns the Fourth derivative of the LCDM wDE function.
         procedure :: integral              => wDELCDMParametrized1DIntegral            !< function that returns the strange integral that we need for w_DE.
 
     end type wDE_LCDM_parametrization_1D
@@ -180,6 +182,21 @@ contains
         ZeroParametrized1DThirdDerivative = 0._dl
 
     end function ZeroParametrized1DThirdDerivative
+
+    ! ---------------------------------------------------------------------------------------------
+    !> Function that returns the Fourth derivative of the zero function.
+    function ZeroParametrized1DFourthDerivative( self, x, eft_cache )
+
+        implicit none
+
+        class(zero_parametrization_1D)                     :: self      !< the base class
+        real(dl), intent(in)                               :: x         !< the input scale factor
+        type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+        real(dl) :: ZeroParametrized1DFourthDerivative                   !< the output value
+
+        ZeroParametrized1DFourthDerivative = 0._dl
+
+    end function ZeroParametrized1DFourthDerivative
 
     ! ---------------------------------------------------------------------------------------------
     !> Function that returns the strange integral that we need for w_DE.
@@ -298,6 +315,21 @@ contains
         wDELCDMParametrized1DThirdDerivative = 0._dl
 
     end function wDELCDMParametrized1DThirdDerivative
+
+    ! ---------------------------------------------------------------------------------------------
+    !> Function that returns the Fourth derivative of the LCDM wDE function.
+    function wDELCDMParametrized1DFourthDerivative( self, x, eft_cache )
+
+        implicit none
+
+        class(wDE_LCDM_parametrization_1D)                 :: self      !< the base class
+        real(dl), intent(in)                               :: x         !< the input scale factor
+        type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+        real(dl) :: wDELCDMParametrized1DFourthDerivative                !< the output value
+
+        wDELCDMParametrized1DFourthDerivative = 0._dl
+
+    end function wDELCDMParametrized1DFourthDerivative
 
     ! ---------------------------------------------------------------------------------------------
     !> Function that returns the strange integral that we need for w_DE.

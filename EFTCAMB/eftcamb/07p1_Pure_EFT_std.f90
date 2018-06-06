@@ -793,6 +793,12 @@ contains
         type(EFTCAMB_parameter_cache), intent(inout) :: eft_par_cache !< the EFTCAMB parameter cache that contains all the physical parameters.
         type(EFTCAMB_timestep_cache ), intent(inout) :: eft_cache     !< the EFTCAMB timestep cache that contains all the physical values.
 
+        real(dl):: Hddd, EFTcdotdot,EFTOmegaPPPP,w_m,gpinudotdot_tot
+
+        gpinudotdot_tot= 0._dl !SP not massive nu implemented yet!
+
+        w_m = 1._dl/3._dl
+
         eft_cache%EFTOmegaV    = self%PureEFTOmega%value(a)
         eft_cache%EFTOmegaP    = self%PureEFTOmega%first_derivative(a)
         eft_cache%EFTOmegaPP   = self%PureEFTOmega%second_derivative(a)
@@ -815,6 +821,30 @@ contains
             & -(a*eft_cache%adotoa)**3*eft_cache%EFTOmegaPPP &
             & +eft_cache%grhov_t*eft_cache%adotoa*( a*self%PureEFTwDE%first_derivative(a) -3._dl*self%PureEFTwDE%value(a)*(1._dl +self%PureEFTwDE%value(a) ))
 
+        Hddd = ((-3*eft_cache%gpinu_tot*eft_cache%Hdot + eft_cache%grhov_t*eft_cache%Hdot +6*self%PureEFTwDE%value(a)*eft_cache%grhov_t*eft_cache%Hdot &
+            &+ 9*self%PureEFTwDE%value(a)**2*eft_cache%grhov_t*eft_cache%Hdot +( eft_cache%grhob_t +eft_cache%grhoc_t)*eft_cache%Hdot &
+            &+ 6*w_m*( eft_cache%grhob_t +eft_cache%grhoc_t)*eft_cache%Hdot +9*w_m**2*( eft_cache%grhob_t +eft_cache%grhoc_t)*eft_cache%Hdot &
+            &+ eft_cache%grhonu_tot*eft_cache%Hdot -3*a*eft_cache%grhov_t*eft_cache%Hdot*self%PureEFTwDE%first_derivative(a)) +eft_cache%adotoa*(&
+            &-9*eft_cache%gpinudot_tot -3*eft_cache%adotoa*(eft_cache%gpinu_tot + eft_cache%grhonu_tot)) - 3*gpinudotdot_tot &
+            &-eft_cache%adotoa**2*(6*eft_cache%gpinu_tot + ( eft_cache%grhob_t +eft_cache%grhoc_t) + 9*w_m*( eft_cache%grhob_t +eft_cache%grhoc_t)&
+            & + 27*w_m**2*( eft_cache%grhob_t +eft_cache%grhoc_t) +27*w_m**3*( eft_cache%grhob_t +eft_cache%grhoc_t) - 2*eft_cache%grhonu_tot &
+            &+eft_cache%grhov_t*(1 + 27*self%PureEFTwDE%value(a)**2 + 27*self%PureEFTwDE%value(a)**3 - 6*a*self%PureEFTwDE%first_derivative(a)) &
+            &+self%PureEFTwDE%value(a)*(9 - 27*a*self%PureEFTwDE%first_derivative(a))) + 3*a**2*self%PureEFTwDE%second_derivative(a))/(6._dl)
+
+        EFTOmegaPPPP = self%PureEFTOmega%fourth_derivative(a)
+
+        eft_cache%EFTcdotdot = (a**2*eft_cache%grhov_t*eft_cache%Hdot*(-3*(1 + self%PureEFTwDE%value(a))**2 + a*self%PureEFTwDE%first_derivative(a)) &
+            &+  (eft_cache%EFTOmegaV*(8*eft_cache%Hdot**2 - 2*Hddd) - a*(-(eft_cache%Hdot**2*(eft_cache%EFTOmegaP &
+            &- 3*a*eft_cache%EFTOmegaPP)) + eft_cache%adotoa*eft_cache%Hdotdot*(eft_cache%EFTOmegaP + a*eft_cache%EFTOmegaPP) + eft_cache%EFTOmegaP*Hddd)) &
+            &+ a*eft_cache%adotoa*eft_cache%adotoa**3* (eft_cache%EFTOmegaP + a*(3*eft_cache%EFTOmegaPP + a*eft_cache%EFTOmegaPPP)) - eft_cache%adotoa* (4*eft_cache%EFTcdot &
+            &+ eft_cache%Hdotdot*(-8*eft_cache%EFTOmegaV + a*(eft_cache%EFTOmegaP + 3*a*eft_cache%EFTOmegaPP)) + a*eft_cache%adotoa*eft_cache%Hdot*(-eft_cache%EFTOmegaP &
+            &+ a*(5*eft_cache%EFTOmegaPP + 3*a*eft_cache%EFTOmegaPPP))) + eft_cache%adotoa**2*(a**2*eft_cache%grhov_t*(3 - 6*a*self%PureEFTwDE%first_derivative(a) &
+            &+ 3*self%PureEFTwDE%value(a)*(5 + self%PureEFTwDE%value(a)*(7 + 3*self%PureEFTwDE%value(a)) - 3*a*self%PureEFTwDE%first_derivative(a)) + a**2*self%PureEFTwDE%second_derivative(a)) &
+            &+  eft_cache%Hdot* (-12*eft_cache%EFTOmegaV + a*(11*eft_cache%EFTOmegaP + 3*a*(eft_cache%EFTOmegaPP - a*eft_cache%EFTOmegaPPP)))) &
+            &-  a*eft_cache%adotoa**4* (4*eft_cache%EFTOmegaP + a**2*(3*eft_cache%EFTOmegaPPP + a*EFTOmegaPPPP)))/(2.)
+
+
+
     end subroutine EFTCAMBPureEFTstdBackgroundEFTFunctions
 
     ! ---------------------------------------------------------------------------------------------
@@ -830,8 +860,10 @@ contains
 
         eft_cache%EFTGamma1V  = self%PureEFTGamma1%value(a)
         eft_cache%EFTGamma1P  = self%PureEFTGamma1%first_derivative(a)
+        eft_cache%EFTGamma1PP  = self%PureEFTGamma1%second_derivative(a)
         eft_cache%EFTGamma2V  = self%PureEFTGamma2%value(a)
         eft_cache%EFTGamma2P  = self%PureEFTGamma2%first_derivative(a)
+        eft_cache%EFTGamma2PP  = self%PureEFTGamma2%second_derivative(a)
         eft_cache%EFTGamma3V  = self%PureEFTGamma3%value(a)
         eft_cache%EFTGamma3P  = self%PureEFTGamma3%first_derivative(a)
         if ( self%PureEFTHorndeski ) then

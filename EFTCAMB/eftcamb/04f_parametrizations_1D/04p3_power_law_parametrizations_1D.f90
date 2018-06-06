@@ -58,6 +58,7 @@ module EFTCAMB_power_law_parametrizations_1D
         procedure :: first_derivative      => PowerLawParametrized1DFirstDerivative     !< function that returns the first derivative of the power law function.
         procedure :: second_derivative     => PowerLawParametrized1DSecondDerivative    !< function that returns the second derivative of the power law function.
         procedure :: third_derivative      => PowerLawParametrized1DThirdDerivative     !< function that returns the third derivative of the power law function.
+        procedure :: fourth_derivative     => PowerLawParametrized1DFourthDerivative     !< function that returns the third derivative of the power law function.
         procedure :: integral              => PowerLawParametrized1DIntegral            !< function that returns the strange integral that we need for w_DE.
 
     end type power_law_parametrization_1D
@@ -209,6 +210,21 @@ contains
         PowerLawParametrized1DThirdDerivative = self%coefficient*self%exponent*(self%exponent-1._dl)*(self%exponent-2._dl)*x**(self%exponent-3._dl)
 
     end function PowerLawParametrized1DThirdDerivative
+
+    ! ---------------------------------------------------------------------------------------------
+    !> Function that returns the third derivative of the function.
+    function PowerLawParametrized1DFourthDerivative( self, x, eft_cache )
+
+        implicit none
+
+        class(power_law_parametrization_1D)                :: self      !< the base class
+        real(dl), intent(in)                               :: x         !< the input scale factor
+        type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+        real(dl) :: PowerLawParametrized1DFourthDerivative               !< the output value
+
+        PowerLawParametrized1DFourthDerivative = self%coefficient*self%exponent*(self%exponent-1._dl)*(self%exponent-2._dl)*(self%exponent-3._dl)*x**(self%exponent-4._dl)
+
+    end function PowerLawParametrized1DFourthDerivative
 
     ! ---------------------------------------------------------------------------------------------
     !> Function that returns the integral of the function, as defined in the notes.

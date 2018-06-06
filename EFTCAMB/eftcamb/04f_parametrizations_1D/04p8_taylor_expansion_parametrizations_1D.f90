@@ -60,6 +60,7 @@ module EFTCAMB_taylor_parametrizations_1D
         procedure :: first_derivative      => TaylorParametrized1DFirstDerivative     !< function that returns the first derivative of the Taylor expansion.
         procedure :: second_derivative     => TaylorParametrized1DSecondDerivative    !< function that returns the second derivative of the Taylor expansion.
         procedure :: third_derivative      => TaylorParametrized1DThirdDerivative     !< function that returns the third derivative of the Taylor expansion.
+        procedure :: fourth_derivative      => TaylorParametrized1DFourthDerivative     !< function that returns the third derivative of the Taylor expansion.
         procedure :: integral              => TaylorParametrized1DIntegral            !< function that returns the strange integral that we need for w_DE.
 
     end type taylor_parametrization_1D
@@ -218,6 +219,20 @@ contains
         TaylorParametrized1DThirdDerivative = self%w3
 
     end function TaylorParametrized1DThirdDerivative
+
+    !> Function that returns the Fourth derivative of the function.
+    function TaylorParametrized1DFourthDerivative( self, x, eft_cache )
+
+        implicit none
+
+        class(taylor_parametrization_1D)                   :: self      !< the base class
+        real(dl), intent(in)                               :: x         !< the input scale factor
+        type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+        real(dl) :: TaylorParametrized1DFourthDerivative                 !< the output value
+
+        TaylorParametrized1DFourthDerivative = 0._dl
+
+    end function TaylorParametrized1DFourthDerivative
 
     ! ---------------------------------------------------------------------------------------------
     !> Function that returns the integral of the function, as defined in the notes.

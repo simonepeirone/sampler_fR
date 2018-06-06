@@ -58,6 +58,7 @@ module EFTCAMB_CPL_parametrizations_1D
         procedure :: first_derivative      => CPLParametrized1DFirstDerivative     !< function that returns the first derivative of the CPL function.
         procedure :: second_derivative     => CPLParametrized1DSecondDerivative    !< function that returns the second derivative of the CPL function.
         procedure :: third_derivative      => CPLParametrized1DThirdDerivative     !< function that returns the third derivative of the CPL function.
+        procedure :: fourth_derivative      => CPLParametrized1DFourthDerivative     !< function that returns the Fourth derivative of the CPL function.
         procedure :: integral              => CPLParametrized1DIntegral            !< function that returns the strange integral that we need for w_DE.
 
     end type CPL_parametrization_1D
@@ -208,6 +209,21 @@ contains
         CPLParametrized1DThirdDerivative = 0._dl
 
     end function CPLParametrized1DThirdDerivative
+
+    ! ---------------------------------------------------------------------------------------------
+    !> Function that returns the Fourth derivative of the function.
+    function CPLParametrized1DFourthDerivative( self, x, eft_cache )
+
+        implicit none
+
+        class(CPL_parametrization_1D)                      :: self      !< the base class
+        real(dl), intent(in)                               :: x         !< the input scale factor
+        type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+        real(dl) :: CPLParametrized1DFourthDerivative                    !< the output value
+
+        CPLParametrized1DFourthDerivative = 0._dl
+
+    end function CPLParametrized1DFourthDerivative
 
     ! ---------------------------------------------------------------------------------------------
     !> Function that returns the integral of the function, as defined in the notes.

@@ -58,6 +58,7 @@ module EFTCAMB_exponential_parametrizations_1D
         procedure :: first_derivative      => ExponentialParametrized1DFirstDerivative     !< function that returns the first derivative of the exponential function.
         procedure :: second_derivative     => ExponentialParametrized1DSecondDerivative    !< function that returns the second derivative of the exponential function.
         procedure :: third_derivative      => ExponentialParametrized1DThirdDerivative     !< function that returns the third derivative of the exponential function.
+        procedure :: fourth_derivative      => ExponentialParametrized1DFourthDerivative     !< function that returns the Fourth derivative of the exponential function.
         procedure :: integral              => ExponentialParametrized1DIntegral            !< function that returns the strange integral that we need for w_DE.
 
     end type exponential_parametrization_1D
@@ -209,6 +210,22 @@ contains
             & *(2._dl +self%exponent*(-3._dl +self%exponent +x**self%exponent*self%coefficient*(-3._dl +self%exponent*(3._dl +x**self%exponent*self%coefficient))))
 
     end function ExponentialParametrized1DThirdDerivative
+
+    ! ---------------------------------------------------------------------------------------------
+    !> Function that returns the Fourth derivative of the function.
+    function ExponentialParametrized1DFourthDerivative( self, x, eft_cache )
+
+        implicit none
+
+        class(exponential_parametrization_1D)              :: self      !< the base class
+        real(dl), intent(in)                               :: x         !< the input scale factor
+        type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+        real(dl) :: ExponentialParametrized1DFourthDerivative            !< the output value
+
+        ExponentialParametrized1DFourthDerivative = 0._dl
+        call MpiStop('fourth derivative not implemented in Exponential parametrization')
+
+    end function ExponentialParametrized1DFourthDerivative
 
     ! ---------------------------------------------------------------------------------------------
     !> Function that returns the integral of the function, as defined in the notes.

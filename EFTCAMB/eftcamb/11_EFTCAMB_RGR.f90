@@ -103,9 +103,9 @@ contains
         real(dl)                     , intent(in)  :: initial_time    !< initial scale factor at which the code starts to look for the RGR of the theory.
         real(dl)                     , intent(out) :: RGR_time        !< output value of the RGR time.
 
-        real(dl) :: eft_functions(21)
+        real(dl) :: eft_functions(21), value
         real(dl) :: a_initial, a_final, log_a_initial, log_a_final, log_a_used, a_used
-        integer  :: i
+        integer  :: i, j
 
         ! initialize:
         RGR_time = initial_time

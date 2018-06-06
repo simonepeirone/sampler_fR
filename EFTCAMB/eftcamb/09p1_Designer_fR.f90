@@ -1054,9 +1054,20 @@ contains
         type(EFTCAMB_timestep_cache ), intent(inout) :: eft_cache     !< the EFTCAMB timestep cache that contains all the physical values.
 
         logical :: EFTCAMBDesignerFRAdditionalModelStability          !< the return value of the stability computation. True if the model specific stability criteria are met, false otherwise.
+        real(dl) :: x, mu
+        integer  :: ind
 
-        EFTCAMBDesignerFRAdditionalModelStability = .True.
-        if ( self%DesfRwDE%value(a) > -1._dl/3._dl ) EFTCAMBDesignerFRAdditionalModelStability = .False.
+        ! x   = log(0.11_dl*EFTturnonpiInitial)
+        ! call self%EFTOmega%precompute(x, ind, mu )
+
+        ! EFTCAMBDesignerFRAdditionalModelStability = .True.
+        ! if ( self%DesfRwDE%value(a) > -1._dl/3._dl ) EFTCAMBDesignerFRAdditionalModelStability = .False.
+        ! if (EFTOmega(0.11_dl*EFTturnonpiInitial,1)*EFTOmegaP<0) EFTStabilityComputation = .false. SP: old EFTCAMB condition
+        EFTCAMBDesignerFRAdditionalModelStability = .true.
+        if (eft_cache%EFTOmegaP>0._dl ) EFTCAMBDesignerFRAdditionalModelStability = .false.
+        if (a>0.99_dl .and. abs(eft_cache%EFTOmegaV)>0.000001_dl ) EFTCAMBDesignerFRAdditionalModelStability = .false.
+        ! write(*,*)'2', eft_cache%EFTOmegaP
+        ! write(33,*)a, eft_cache%EFTOmegaP
 
     end function EFTCAMBDesignerFRAdditionalModelStability
 

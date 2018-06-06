@@ -63,6 +63,7 @@ module EFTCAMB_JBP_parametrizations_1D
         procedure :: first_derivative      => JBPParametrized1DFirstDerivative     !< function that returns the first derivative of the JBP function.
         procedure :: second_derivative     => JBPParametrized1DSecondDerivative    !< function that returns the second derivative of the JBP function.
         procedure :: third_derivative      => JBPParametrized1DThirdDerivative     !< function that returns the third derivative of the JBP function.
+        procedure :: fourth_derivative      => JBPParametrized1DFourthDerivative     !< function that returns the Fourth derivative of the JBP function.
         procedure :: integral              => JBPParametrized1DIntegral            !< function that returns the strange integral that we need for w_DE.
 
     end type JBP_parametrization_1D
@@ -217,6 +218,22 @@ contains
         JBPParametrized1DThirdDerivative = -x**(-4._dl +self%wn)*(-2.0_dl +self%wn)*(-1._dl +self%wn)*(3._dl +self%wn*(-1._dl +x))*self%wa
 
     end function JBPParametrized1DThirdDerivative
+
+    ! ---------------------------------------------------------------------------------------------
+    !> Function that returns the Fourth derivative of the function.
+    function JBPParametrized1DFourthDerivative( self, x, eft_cache )
+
+        implicit none
+
+        class(JBP_parametrization_1D)                      :: self      !< the base class
+        real(dl), intent(in)                               :: x         !< the input scale factor
+        type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+        real(dl) :: JBPParametrized1DFourthDerivative                    !< the output value
+
+        JBPParametrized1DFourthDerivative = 0._Dl
+        call MpiStop('fourth derivative not implemented in JBP')
+
+    end function JBPParametrized1DFourthDerivative
 
     ! ---------------------------------------------------------------------------------------------
     !> Function that returns the integral of the function, as defined in the notes.

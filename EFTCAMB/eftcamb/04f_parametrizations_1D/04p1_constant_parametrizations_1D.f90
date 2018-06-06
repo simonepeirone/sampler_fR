@@ -57,6 +57,7 @@ module EFTCAMB_constant_parametrization_1D
         procedure :: first_derivative      => ConstantParametrized1DFirstDerivative     !< function that returns the first derivative of the constant function.
         procedure :: second_derivative     => ConstantParametrized1DSecondDerivative    !< function that returns the second derivative of the constant function.
         procedure :: third_derivative      => ConstantParametrized1DThirdDerivative     !< function that returns the third derivative of the constant function.
+        procedure :: fourth_derivative      => ConstantParametrized1DFourthDerivative     !< function that returns the Fourth derivative of the constant function.
         procedure :: integral              => ConstantParametrized1DIntegral            !< function that returns the strange integral that we need for w_DE.
 
     end type constant_parametrization_1D
@@ -206,6 +207,21 @@ contains
         ConstantParametrized1DThirdDerivative = 0._dl
 
     end function ConstantParametrized1DThirdDerivative
+
+    ! ---------------------------------------------------------------------------------------------
+    !> Function that returns the Fourth derivative of the constant function.
+    function ConstantParametrized1DFourthDerivative( self, x, eft_cache )
+
+        implicit none
+
+        class(constant_parametrization_1D)                 :: self      !< the base class
+        real(dl), intent(in)                               :: x         !< the input scale factor
+        type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+        real(dl) :: ConstantParametrized1DFourthDerivative               !< the output value
+
+        ConstantParametrized1DFourthDerivative = 0._dl
+
+    end function ConstantParametrized1DFourthDerivative
 
     ! ---------------------------------------------------------------------------------------------
     !> Function that returns the strange integral that we need for w_DE.
